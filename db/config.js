@@ -13,4 +13,5 @@ module.exports = {
     url: URI,
     dialect: 'postgres',
   }
+
 }
