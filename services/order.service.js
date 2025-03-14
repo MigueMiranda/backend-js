@@ -1,27 +1,55 @@
 const boom = require('@hapi/boom');
 
-const pool = require('../libs/postgres.pool');
+const { models } = require('../libs/sequelize');
 
 class OrderService {
 
-  constructor(){
-    this.pool = pool;
-    this.pool.on('error', (err) => console.error(err));
+  constructor() {
   }
+
   async create(data) {
-    return data;
+    const newOrder = await models.Order.create(data);
+    return newOrder;
+  }
+
+  async addItem(data) {
+    const order = await models.Order.findByPk(data.orderId);
+    if (!order) {
+      throw new Error('Order not found');
+    }
+    if (!order.customerId) {
+      throw new Error('Order must have a customerId before adding items');
+    }
+    const newItem = await models.OrderProduct.create(data);
+    return newItem;
   }
 
   async find() {
-    const query = 'SELECT * FROM tasks';
-    const rta = await this.pool.query(query);
-    return rta.rows;
+    const order = await models.Order.findAll({
+      include: [
+        {
+          association: 'customer',
+          include: ['user']
+        }
+      ]
+    })
+    return order;
   }
 
   async findOne(id) {
-    const query = `SELECT * FROM tasks WHERE id = ${id}`;
-    const rta = await this.pool.query(query);
-    return rta.rows;
+    const order = await models.Order.findByPk(id, {
+      include: [
+        {
+          association: 'customer',
+          include: ['user']
+        },
+        'items'
+      ]
+    });
+    if (!order) {
+      throw boom.notFound('Order not found');
+    }
+    return order;
   }
 
   async update(id, changes) {
