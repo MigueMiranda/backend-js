@@ -28,14 +28,18 @@ class CategoryService {
   }
 
   async update(id, changes) {
-    return {
-      id,
-      changes,
-    };
+    const category = await this.findOne(id);
+    await models.Category.update(changes, {
+      where: { id: category.id },
+    });
+    const updateCategory = await this.findOne(id);
+    return updateCategory;
   }
 
   async delete(id) {
-    return { id };
+    const category = await this.findOne(id);
+    await models.Category.destroy(category.id);
+    return category.id;
   }
 
 }

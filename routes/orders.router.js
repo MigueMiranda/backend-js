@@ -7,8 +7,10 @@ const {
   getOrderSchema,
   addItemSchema,
 } = require('../schemas/order.schema');
+const CustomerService = require('../services/customers.service');
 
 const router = express.Router();
+const customerService = new CustomerService();
 const service = new OrderService();
 
 router.get('/', async (req, res, next) => {
@@ -37,8 +39,9 @@ router.post('/',
   validatorHandler(createOrderSchema, 'body'),
   async (req, res, next) => {
     try {
-      const body = req.body;
-      const newOrder = await service.create(body);
+      const customer = customerService.findByUser(req.user);
+      console.log('customerId: ', customer)
+      const newOrder = await service.create(customer);
       res.status(201).json(newOrder);
     } catch (error) {
       next(error);

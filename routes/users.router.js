@@ -7,7 +7,8 @@ const { updateUserSchema, createUserSchema, getUserSchema } = require('./../sche
 const router = express.Router();
 const service = new UserService();
 
-router.get('/', async (req, res, next) => {
+router.get('/',
+  async (req, res, next) => {
   try {
     const categories = await service.find();
     res.json(categories);
