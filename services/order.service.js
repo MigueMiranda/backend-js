@@ -20,6 +20,9 @@ class OrderService {
     if (!order.customerId) {
       throw new Error('Order must have a customerId before adding items');
     }
+    if (order.status != 'pendiente_pago') {
+      throw new Error('Order must be in pendiente pago status to add items');
+    }
     const newItem = await models.OrderProduct.create(data);
     return newItem;
   }

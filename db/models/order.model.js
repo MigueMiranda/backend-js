@@ -21,6 +21,11 @@ const OrderSchema = {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
   },
+  status: {
+    allowNull: false,
+    type: DataTypes.STRING,
+    defaultValue: 'pendiente_pago',
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,

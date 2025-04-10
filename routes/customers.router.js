@@ -3,6 +3,7 @@ const passport = require('passport');
 
 const CustomerService = require('../services/customers.service');
 const validationHandler = require('../middlewares/validator.handler');
+const { checkRoles } = require('./../middlewares/auth.handler');
 const {
   createCustomerSchema,
   getCustomerSchema,
@@ -49,6 +50,7 @@ router.patch('/:id',
 
 router.delete('/:id',
   passport.authenticate('jwt', {session: false}),
+  checkRoles('admin'),
   validationHandler(getCustomerSchema, 'params'),
   async (req, res, next) => {
     try {
