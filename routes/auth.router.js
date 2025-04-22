@@ -11,7 +11,25 @@ router.post('/login',
   async (req, res, next) => {
     try {
       const user = req.user;
-      res.json(service.signToken(user));
+      if (!user) {
+        return res.status(401).json({ message: 'Credenciales inválidas' });
+      }
+      const token = service.signToken(user);
+      console.log('Email: ', req.user.email, 'Role: ', req.user.role, 'Password: ', req.user.password);
+      console.log('Token: ', token);
+      res.status(200).json(token);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get('/profile',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      res.json(user);
     } catch (error) {
       next(error);
     }

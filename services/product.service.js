@@ -5,8 +5,7 @@ const boom = require('@hapi/boom');
 const { models } = require('../libs/sequelize');
 
 class ProductsService {
-
-  constructor(){
+  constructor() {
     this.products = [];
     this.generate();
   }
@@ -32,10 +31,10 @@ class ProductsService {
   async find(query) {
     const options = {
       include: ['category'],
-      where: {}
-    }
+      where: {},
+    };
     const { limit, offset } = query;
-    if ( limit && offset ) {
+    if (limit && offset) {
       options.limit = limit;
       options.offset = offset;
     }
@@ -67,6 +66,19 @@ class ProductsService {
     return product;
   }
 
+  async getByCategory(id, limit, offset) {
+    return await models.Product.findAll({
+      where: {
+        categoryId: id,
+      },
+      include: [{
+        association: 'category'
+      }],
+      limit,
+      offset
+    });
+  }
+
   async update(id, changes) {
     const product = await this.findOne(id);
     await models.Product.update(changes, {
@@ -78,7 +90,9 @@ class ProductsService {
 
   async delete(id) {
     const product = await this.findOne(id);
-    await models.Product.destroy(product.id);
+    await models.Product.destroy({
+      where: { id: product.id }
+    });
     return product.id;
   }
 

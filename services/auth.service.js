@@ -26,7 +26,8 @@ class AuthService {
   signToken(user) {
     const payload = {
       sub: user.id,
-      rele: user.role
+      role: user.role,
+      email: user.email
     }
     const token = jwt.sign(payload, config.jwtSecret);
     return {
@@ -42,7 +43,7 @@ class AuthService {
     }
     const payload = { sub: user.id };
     const token = jwt.sign(payload, config.jwtSecret, {expiresIn: '15min'});
-    const link = `https://myfrontend.com/recovery?token=${token}`;
+    const link = `http://localhost:4200/recovery?token=${token}`;
     await service.update(user.id, {recoveryToken: token});
     const mail = {
       from: 'nicobytes.demo@gmail.com', // sender address

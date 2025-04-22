@@ -8,7 +8,7 @@ const image = Joi.string().uri();
 const categoryId = Joi.number().integer();
 
 const price_min = Joi.number().integer();
-const price_max = Joi.number().integer();
+//const price_max = Joi.number().integer();
 
 const limit = Joi.number().integer();
 const offset = Joi.number().integer();
@@ -19,6 +19,7 @@ const createProductSchema = Joi.object({
   description: description.required(),
   image: image.required(),
   categoryId: categoryId.required(),
+  quantity: Joi.number().min(0).required()
 });
 
 const updateProductSchema = Joi.object({
@@ -26,7 +27,8 @@ const updateProductSchema = Joi.object({
   price: price,
   image: image,
   description: description,
-  categoryId
+  categoryId,
+  quantity: Joi.number().min(0).required()
 });
 
 const getProductSchema = Joi.object({
@@ -38,9 +40,10 @@ const queryProductSchema = Joi.object({
   offset,
   price,
   price_min,
-  price_max: price_max.when('price_min', {
+  price_max: Joi.when('price_min', {
     is: Joi.number().integer(),
-    then: Joi.required()
+    then: Joi.number().integer().min(Joi.ref('price_min')),
+    otherwise: Joi.number().integer()
   })
 });
 

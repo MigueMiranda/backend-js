@@ -38,7 +38,9 @@ class CategoryService {
 
   async delete(id) {
     const category = await this.findOne(id);
-    await models.Category.destroy(category.id);
+    await models.Category.destroy({
+      where: {id: category.id}
+    });
     return category.id;
   }
 
